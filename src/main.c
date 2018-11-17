@@ -12,8 +12,6 @@
 #include "song.h"
 #include "genre.h"
 
-#include <stdbool.h>
-
 #ifdef _WIN32
 #define CONSOLE_CLEAR_CMD "cls"
 #elif __linux__
@@ -25,18 +23,19 @@
 void generateTestData(Node **genres)
 {
     Node *pop_songs = NULL;
-    pushBackSong(&pop_songs, "Song 1", "Author");
     pushBackSong(&pop_songs, "Song 2", "Author");
     pushBackSong(&pop_songs, "Song 3", "Author");
     pushBackSong(&pop_songs, "Song 4", "Author");
     pushBackSong(&pop_songs, "Song 5", "Author");
+    pushFrontSong(&pop_songs, "Song 1", "Author");
     pushBackGenre(genres, "Pop", pop_songs);
 
     Node *rock_songs = NULL;
-    pushBackSong(&rock_songs, "Song 6", "Author");
-    pushBackSong(&rock_songs, "Song 7", "Author");
-    pushBackSong(&rock_songs, "Song 8", "Author");
-    pushBackGenre(genres, "Rock", rock_songs);
+    pushFrontSong(&rock_songs, "Song 6", "Author");
+    pushFrontSong(&rock_songs, "Song 7", "Author");
+    pushFrontSong(&rock_songs, "Song 8", "Author");
+    insertAfterSong(&rock_songs, "Song 7.5", "Author", 2);
+    pushFrontGenre(genres, "Rock", rock_songs);
 
     Node *jazz_songs = NULL;
     pushBackGenre(genres, "Jazz", jazz_songs);
@@ -149,6 +148,26 @@ void handlePlay(Node **playlist)
 
 void handleAdd(Node **playlist)
 {
+    while (true)
+    {
+        printf("Add:\n");
+        printf("1) Song\n");
+        printf("2) Genre\n");
+        printf("3) Cancel\n");
+
+        switch (inputInteger())
+        {
+            case 1: // Add song
+                return;
+            case 2: // Add genre
+                return;
+            case 3: // Cancel
+                return;
+            default: // Invalid
+                printf("Invalid command, try again.\n\n");
+                break;
+        }
+    }
 }
 
 void handleEdit(Node **playlist)

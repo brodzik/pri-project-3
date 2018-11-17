@@ -21,7 +21,13 @@ struct Genre
     Node *songs;
 };
 
+Genre *createGenre(char *name, Node *songs);
+
 void pushBackGenre(Node **head, char *name, Node *songs);
+
+void pushFrontGenre(Node **head, char *name, Node *songs);
+
+void insertAfterGenre(Node **head, char *name, Node *songs, int index);
 
 void genrePrinter(void *data);
 
