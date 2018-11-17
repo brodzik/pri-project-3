@@ -89,14 +89,34 @@ void handlePlay(Node **playlist)
                 printf("Now playing: %s - %s\n", ((Song*)current_song->data)->artist, ((Song*)current_song->data)->name);
                 printf("\n");
                 printf("Commands:\n");
-                printf("1) Previous song\n");
-                printf("2) Next song\n");
+                printf("1) Next song\n");
+                printf("2) Previous song\n");
                 printf("3) Stop\n");
                 printf("\n");
 
                 switch (inputInteger())
                 {
-                    case 1: // Previous
+                    case 1: // Next
+                        if (current_song->next == first_song)
+                        {
+                            // Find next non-empty genre
+                            do
+                            {
+                                current_genre = current_genre->next;
+                            }
+                            while (((Genre*)current_genre->data)->songs == NULL);
+
+                            first_song = ((Genre*)current_genre->data)->songs;
+                            last_song = ((Genre*)current_genre->data)->songs->prev;
+                            current_song = first_song;
+                        }
+                        else
+                        {
+                            current_song = current_song->next;
+                        }
+
+                        break;
+                    case 2: // Previous
                         if (current_song->prev == last_song)
                         {
                             // Find previous non-empty genre
@@ -113,26 +133,6 @@ void handlePlay(Node **playlist)
                         else
                         {
                             current_song = current_song->prev;
-                        }
-
-                        break;
-                    case 2: // Next
-                        if (current_song->next == first_song)
-                        {
-                            // Find next non-empty genre
-                            do
-                            {
-                                current_genre = current_genre->next;
-                            }
-                            while (((Genre*)current_genre->data)->songs == NULL);
-                            
-                            first_song = ((Genre*)current_genre->data)->songs;
-                            last_song = ((Genre*)current_genre->data)->songs->prev;
-                            current_song = first_song;
-                        }
-                        else
-                        {
-                            current_song = current_song->next;
                         }
 
                         break;
