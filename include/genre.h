@@ -15,6 +15,11 @@
 #include "song.h"
 
 typedef struct Genre Genre;
+struct Genre
+{
+    char name[MAX_STRING];
+    Node *songs;
+};
 
 void pushBackGenre(Node **head, char *name, Node *songs);
 

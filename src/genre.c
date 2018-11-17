@@ -11,12 +11,6 @@
 
 #include "genre.h"
 
-struct Genre
-{
-    char name[MAX_STRING];
-    Node *songs;
-};
-
 void pushBackGenre(Node **head, char *name, Node *songs)
 {
     Genre *new_genre = (Genre*)malloc(sizeof(Genre));

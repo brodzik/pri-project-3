@@ -11,11 +11,6 @@
 
 #include "song.h"
 
-struct Song
-{
-    char name[MAX_STRING], artist[MAX_STRING];
-};
-
 void pushBackSong(Node **head, char *name, char *artist)
 {
     Song *new_song = (Song*)malloc(sizeof(Song));

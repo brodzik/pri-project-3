@@ -14,6 +14,10 @@
 #include "list.h"
 
 typedef struct Song Song;
+struct Song
+{
+    char name[MAX_STRING], artist[MAX_STRING];
+};
 
 void pushBackSong(Node **head, char *name, char *artist);
 

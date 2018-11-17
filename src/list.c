@@ -11,12 +11,6 @@
 
 #include "list.h"
 
-struct Node
-{
-    void *data;
-    Node *prev, *next;
-};
-
 void pushBack(Node **head, void *data, size_t size)
 {
     Node *new_node = (Node*)malloc(sizeof(Node));
@@ -26,22 +20,21 @@ void pushBack(Node **head, void *data, size_t size)
 
     if (*head == NULL)
     {
-        new_node->next = new_node;
         new_node->prev = new_node;
+        new_node->next = new_node;
         *head = new_node;
     }
     else
     {
-        Node *last = *head;
-        while (last->next != *head)
-        {
-            last = last->next;
-        }
-
-        last->next = new_node;
-
+        // Link new node to first and last element
         new_node->next = *head;
-        new_node->prev = last;
+          new_node->prev = (*head)->prev;
+
+        // Link last element to new node
+        (*head)->prev->next = new_node;
+
+        // Link first element to new node
+        (*head)->prev = new_node;
     }
 }
 

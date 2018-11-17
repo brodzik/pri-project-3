@@ -18,6 +18,11 @@
 #define MAX_STRING 100
 
 typedef struct Node Node;
+struct Node
+{
+    void *data;
+    Node *prev, *next;
+};
 
 void pushBack(Node **head, void *data, size_t size);
 
