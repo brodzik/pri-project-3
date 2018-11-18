@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAX_STRING 100
+#define MAX_STRING 101
 
 typedef struct Node Node;
 struct Node
@@ -30,6 +30,4 @@ void pushBack(Node **head, void *data, size_t size);
 void pushFront(Node **head, void *data, size_t size);
 
 bool insertAfter(Node **head, void *data, size_t size, int index);
-
-void printList(Node **head, void (*printer)(void*));
 

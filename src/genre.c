@@ -31,23 +31,40 @@ void pushFrontGenre(Node **head, char *name, Node *songs)
     pushFront(head, createGenre(name, songs), sizeof(Genre));
 }
 
-void insertAfterGenre(Node **head, char *name, Node *songs, int index)
+bool insertAfterGenre(Node **head, char *name, Node *songs, int index)
 {
-    insertAfter(head, createGenre(name, songs), sizeof(Genre), index);
+    return insertAfter(head, createGenre(name, songs), sizeof(Genre), index);
 }
 
-void genrePrinter(void *data)
+void printGenres(Node **head, void (*callback)(Node*))
 {
-    if (data != NULL)
+    if (*head != NULL)
     {
-        printf("%s:\n", ((Genre*)data)->name);
+        Node *last = *head;
+        int i = 1;
 
-        if (((Genre*)data)->songs != NULL)
+        printf("Genres:\n");
+
+        do
         {
-            printList(&((Genre*)data)->songs, songPrinter);
+            printf("%d) %s\n", i, ((Genre*)last->data)->name);
+
+            if (callback != NULL)
+            {
+                callback(((Genre*)last->data)->songs);
+            }
+
+            last = last->next;
+            ++i;
         }
+        while (last != *head);
 
         printf("\n");
     }
+}
+
+void printAll(Node **head)
+{
+    printGenres(head, printSongs);
 }
 

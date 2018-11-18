@@ -27,7 +27,9 @@ void pushBackGenre(Node **head, char *name, Node *songs);
 
 void pushFrontGenre(Node **head, char *name, Node *songs);
 
-void insertAfterGenre(Node **head, char *name, Node *songs, int index);
+bool insertAfterGenre(Node **head, char *name, Node *songs, int index);
 
-void genrePrinter(void *data);
+void printGenres(Node **head, void (*callback)(Node*));
+
+void printAll(Node **head);
 

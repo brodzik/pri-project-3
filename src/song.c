@@ -10,6 +10,7 @@
  */
 
 #include "song.h"
+#include "genre.h"
 
 Song *createSong(char *name, char *artist)
 {
@@ -31,16 +32,26 @@ void pushFrontSong(Node **head, char *name, char *artist)
     pushFront(head, createSong(name, artist), sizeof(Song));
 }
 
-void insertAfterSong(Node **head, char *name, char *artist, int index)
+bool insertAfterSong(Node **head, char *name, char *artist, int index)
 {
-    insertAfter(head, createSong(name, artist), sizeof(Song), index);
+    return insertAfter(head, createSong(name, artist), sizeof(Song), index);
 }
 
-void songPrinter(void *data)
+void printSongs(Node *songs)
 {
-    if (data != NULL)
+    if (songs != NULL)
     {
-        printf("%s - %s\n", ((Song*)data)->name, ((Song*)data)->artist);
+        Node *last = songs;
+        int i = 1;
+
+        do
+        {
+            printf("    %d) %s - %s\n", i, ((Song*)last->data)->artist, ((Song*)last->data)->name);
+
+            last = last->next;
+            ++i;
+        }
+        while (last != songs);
     }
 }
 

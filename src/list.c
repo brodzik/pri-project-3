@@ -92,24 +92,11 @@ bool insertAfter(Node **head, void *data, size_t size, int index)
 
             last->next->prev = new_node;
             last->next = new_node;
+
+            return true;
         }
     }
 
     return false;
-}
-
-void printList(Node **head, void (*printer)(void*))
-{
-    if (*head != NULL)
-    {
-        Node *last = *head;
-
-        do
-        {
-            printer(last->data);
-            last = last->next;
-        }
-        while (last != *head);
-    }
 }
 

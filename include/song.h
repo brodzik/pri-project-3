@@ -25,7 +25,7 @@ void pushBackSong(Node **head, char *name, char *artist);
 
 void pushFrontSong(Node **head, char *name, char *artist);
 
-void insertAfterSong(Node **head, char *name, char *artist, int index);
+bool insertAfterSong(Node **head, char *name, char *artist, int index);
 
-void songPrinter(void *data);
+void printSongs(Node *songs);
 

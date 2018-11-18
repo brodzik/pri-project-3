@@ -34,7 +34,7 @@ void generateTestData(Node **genres)
     pushFrontSong(&rock_songs, "Song 6", "Author");
     pushFrontSong(&rock_songs, "Song 7", "Author");
     pushFrontSong(&rock_songs, "Song 8", "Author");
-    insertAfterSong(&rock_songs, "Song 7.5", "Author", 2);
+    insertAfterSong(&rock_songs, "Song 6.5", "Author", 2);
     pushFrontGenre(genres, "Rock", rock_songs);
 
     Node *jazz_songs = NULL;
@@ -146,6 +146,59 @@ void handlePlay(Node **playlist)
     }
 }
 
+void handleAddSong(Node **playlist)
+{
+}
+
+void inputString(char *s)
+{
+    scanf("%100s", s);
+    flushInputBuffer();
+    clearScreen();
+}
+
+void handleAddGenre(Node **playlist)
+{
+    printf("Genre name: ");
+    char name[MAX_STRING];
+    inputString(name);
+
+    while (true)
+    {
+        printf("Add genre:\n");
+        printf("1) Push back\n");
+        printf("2) Push front\n");
+        printf("3) Insert after\n");
+
+        switch (inputInteger())
+        {
+            case 1:
+                pushBackGenre(playlist, name, NULL);
+                return;
+            case 2:
+                pushFrontGenre(playlist, name, NULL);
+                return;
+            case 3:
+                printGenres(playlist, NULL);
+                printf("Insert after: ");
+                int index = inputInteger();
+
+                if (insertAfterGenre(playlist, name, NULL, index))
+                {
+                    return;
+                }
+                else
+                {
+                    printf("Invalid index, try again.\n\n");
+                    break;
+                }
+            default:
+                printf("Invalid command, try again.\n\n");
+                break;
+        }
+    }
+}
+
 void handleAdd(Node **playlist)
 {
     while (true)
@@ -158,8 +211,10 @@ void handleAdd(Node **playlist)
         switch (inputInteger())
         {
             case 1: // Add song
+                handleAddSong(playlist);
                 return;
             case 2: // Add genre
+                handleAddGenre(playlist);
                 return;
             case 3: // Cancel
                 return;
@@ -168,10 +223,6 @@ void handleAdd(Node **playlist)
                 break;
         }
     }
-}
-
-void handleEdit(Node **playlist)
-{
 }
 
 void handleRemove(Node **playlist)
@@ -185,7 +236,6 @@ void handleSave(Node **playlist)
 int main()
 {
     Node *playlist = NULL;
-
     generateTestData(&playlist);
 
     clearScreen();
@@ -196,10 +246,9 @@ int main()
         printf("1) Play\n");
         printf("2) List\n");
         printf("3) Add\n");
-        printf("4) Edit\n");
-        printf("5) Remove\n");
-        printf("6) Save\n");
-        printf("7) Exit\n");
+        printf("4) Remove\n");
+        printf("5) Save\n");
+        printf("6) Exit\n");
         printf("\n");
 
         switch (inputInteger())
@@ -208,21 +257,18 @@ int main()
                 handlePlay(&playlist);
                 break;
             case 2: // List
-                printList(&playlist, genrePrinter);
+                printAll(&playlist);
                 break;
             case 3: // Add
                 handleAdd(&playlist);
                 break;
-            case 4: // Edit
-                handleEdit(&playlist);
-                break;
-            case 5: // Remove
+            case 4: // Remove
                 handleRemove(&playlist);
                 break;
-            case 6: // Save
+            case 5: // Save
                 handleSave(&playlist);
                 break;
-            case 7: // Exit
+            case 6: // Exit
                 exit(0);
                 break;
             default: // Invalid
