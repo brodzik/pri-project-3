@@ -68,3 +68,24 @@ void printAll(Node **head)
     printGenres(head, printSongs);
 }
 
+Node *getGenre(Node **head, int index)
+{
+    Node *last = *head;
+    int i = 1;
+
+    while (i != index && last->next != *head)
+    {
+        ++i;
+        last = last->next;
+    }
+
+    if (i == index)
+    {
+        return last;
+    }
+    else
+    {
+        return NULL;
+    }
+}
+

@@ -75,8 +75,8 @@ bool insertAfter(Node **head, void *data, size_t size, int index)
     if (*head != NULL)
     {
         Node *last = *head;
-
         int i = 1;
+
         while (i != index && last->next != *head)
         {
             ++i;

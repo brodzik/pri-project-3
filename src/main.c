@@ -71,6 +71,13 @@ int inputInteger()
     return i;
 }
 
+void inputString(char *s)
+{
+    scanf("%100s", s);
+    flushInputBuffer();
+    clearScreen();
+}
+
 void handlePlay(Node **playlist)
 {
     if (*playlist != NULL)
@@ -148,13 +155,63 @@ void handlePlay(Node **playlist)
 
 void handleAddSong(Node **playlist)
 {
-}
+    printGenres(playlist, NULL);
+    printf("Genre: ");
+    int genre_index = inputInteger();
 
-void inputString(char *s)
-{
-    scanf("%100s", s);
-    flushInputBuffer();
-    clearScreen();
+    Node *genre = getGenre(playlist, genre_index);
+
+    if (genre == NULL)
+    {
+        printf("Invalid index, try again.\n\n");
+    }
+    else
+    {
+        printf("Song name: ");
+        char name[MAX_STRING];
+        inputString(name);
+
+        printf("Song artist: ");
+        char artist[MAX_STRING];
+        inputString(artist);
+
+        while (true)
+        {
+            printf("Add song:\n");
+            printf("1) Push back\n");
+            printf("2) Push front\n");
+            printf("3) Insert after\n");
+
+            switch (inputInteger())
+            {
+                case 1:
+                    pushBackSong(&((Genre*)genre->data)->songs, name, artist);
+                    return;
+                case 2:
+                    pushFrontSong(&((Genre*)genre->data)->songs, name, artist);
+                    return;
+                case 3:
+                    printf("%s:\n", ((Genre*)genre->data)->name);
+                    printSongs(((Genre*)genre->data)->songs);
+                    printf("Insert after: ");
+                    int index = inputInteger();
+
+                    if (insertAfterSong(&((Genre*)genre->data)->songs, name, artist, index))
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        printf("Invalid index, try again.\n\n");
+                        break;
+                    }
+                default:
+                    printf("Invalid command, try again.\n\n");
+                    break;
+            }
+        }
+
+    }
 }
 
 void handleAddGenre(Node **playlist)
