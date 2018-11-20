@@ -100,3 +100,69 @@ bool insertAfter(Node **head, void *data, size_t size, int index)
     return false;
 }
 
+Node *getNode(Node **head, int index)
+{
+    if (*head == NULL)
+    {
+        return NULL;
+    }
+
+    Node *last = *head;
+    int i = 1;
+
+    while (i != index && last->next != *head)
+    {
+        ++i;
+        last = last->next;
+    }
+
+    if (i == index)
+    {
+        return last;
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
+bool removeNodeAt(Node **head, int index)
+{
+    if (*head != NULL)
+    {
+        Node *curr = *head;
+        int i = 1;
+
+        while (i != index && curr->next != *head)
+        {
+            ++i;
+            curr = curr->next;
+        }
+
+        if (i == index)
+        {
+            if (curr == *head && curr->next == *head && curr->prev == *head)
+            {
+                *head = NULL;
+            }
+            else
+            {
+                if (curr == *head)
+                {
+                    *head = curr->next;
+                }
+
+                curr->prev->next = curr->next;
+                curr->next->prev = curr->prev;
+            }
+
+            free(curr->data);
+            free(curr);
+
+            return true;
+        }
+    }
+
+    return false;
+}
+

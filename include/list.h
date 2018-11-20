@@ -31,3 +31,7 @@ void pushFront(Node **head, void *data, size_t size);
 
 bool insertAfter(Node **head, void *data, size_t size, int index);
 
+Node *getNode(Node **head, int index);
+
+bool removeNodeAt(Node **head, int index);
+

@@ -33,5 +33,3 @@ void printGenres(Node **head, void (*callback)(Node*));
 
 void printAll(Node **head);
 
-Node *getGenre(Node **head, int index);
-

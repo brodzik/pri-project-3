@@ -151,6 +151,10 @@ void handlePlay(Node **playlist)
             }
         }
     }
+    else
+    {
+        printf("Nothing to play.\n\n");
+    }
 }
 
 void handleAddSong(Node **playlist)
@@ -159,7 +163,7 @@ void handleAddSong(Node **playlist)
     printf("Genre: ");
     int genre_index = inputInteger();
 
-    Node *genre = getGenre(playlist, genre_index);
+    Node *genre = getNode(playlist, genre_index);
 
     if (genre == NULL)
     {
@@ -282,8 +286,75 @@ void handleAdd(Node **playlist)
     }
 }
 
+void handleRemoveSong(Node **playlist)
+{
+    printGenres(playlist, NULL);
+    printf("Genre: ");
+    int genre_index = inputInteger();
+
+    Node *genre = getNode(playlist, genre_index);
+
+    if (genre == NULL)
+    {
+        printf("Invalid index, try again.\n\n");
+    }
+    else
+    {
+        printf("%s:\n", ((Genre*)genre->data)->name);
+        printSongs(((Genre*)genre->data)->songs);
+        printf("Remove song: ");
+        int song_index = inputInteger();
+
+        if (!removeNodeAt(&((Genre*)genre->data)->songs, song_index))
+        {
+            printf("Invalid index, try again.\n\n");
+        }
+    }
+}
+
+void handleRemoveGenre(Node **playlist)
+{
+    printGenres(playlist, NULL);
+    printf("Genre: ");
+    int genre_index = inputInteger();
+
+    Node *genre = getNode(playlist, genre_index);
+
+    if (genre == NULL)
+    {
+        printf("Invalid index, try again.\n\n");
+    }
+    else
+    {
+        while (removeNodeAt(&((Genre*)genre->data)->songs, 1));
+        removeNodeAt(playlist, genre_index);
+    }
+}
+
 void handleRemove(Node **playlist)
 {
+    while (true)
+    {
+        printf("Remove:\n");
+        printf("1) Song\n");
+        printf("2) Genre\n");
+        printf("3) Cancel\n");
+
+        switch (inputInteger())
+        {
+            case 1: // Remove song
+                handleRemoveSong(playlist);
+                return;
+            case 2: // Remove genre
+                handleRemoveGenre(playlist);
+                return;
+            case 3: // Cancel
+                return;
+            default: // Invalid
+                printf("Invalid command, try again.\n");
+                break;
+        }
+    }
 }
 
 void handleSave(Node **playlist)

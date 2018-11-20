@@ -53,5 +53,9 @@ void printSongs(Node *songs)
         }
         while (last != songs);
     }
+    else
+    {
+        printf("    (Empty)\n");
+    }
 }
 
