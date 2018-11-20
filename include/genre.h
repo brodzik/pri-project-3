@@ -33,3 +33,5 @@ void printGenres(Node **head, void (*callback)(Node*));
 
 void printAll(Node **head);
 
+void removeAll(Node **head);
+

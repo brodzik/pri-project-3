@@ -72,3 +72,23 @@ void printAll(Node **head)
     printGenres(head, printSongs);
 }
 
+void removeAll(Node **head)
+{
+    // Break list cyclicity
+    if (*head != NULL)
+    {
+        (*head)->prev->next = NULL;
+    }
+
+    while (*head != NULL)
+    {
+        Node *temp = *head;
+        *head = (*head)->next;
+
+        while (removeNodeAt(&((Genre*)temp->data)->songs, 1));
+
+        free(temp->data);
+        free(temp);
+    }
+}
+

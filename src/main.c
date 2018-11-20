@@ -397,6 +397,7 @@ int main()
                 handleSave(&playlist);
                 break;
             case 6: // Exit
+                removeAll(&playlist);
                 exit(0);
                 break;
             default: // Invalid
