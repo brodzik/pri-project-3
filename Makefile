@@ -4,7 +4,7 @@ CXX = gcc
 CFLAGS = -std=c11 -Wall -Wextra -pedantic
 
 SOURCE_DIR = src
-HEADER_DIR = include
+HEADER_DIR = src
 BUILD_DIR = build
 
 SOURCES = $(wildcard $(SOURCE_DIR)/*.c)

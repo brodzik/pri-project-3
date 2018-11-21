@@ -20,33 +20,33 @@
 #define CONSOLE_CLEAR_CMD ""
 #endif
 
-void generateTestData(Node **genres)
+void generateTestData(Genre **playlist)
 {
-    Node *pop_songs = NULL;
+    Song *pop_songs = NULL;
     pushBackSong(&pop_songs, "Song 2", "Author");
     pushBackSong(&pop_songs, "Song 3", "Author");
     pushBackSong(&pop_songs, "Song 4", "Author");
     pushBackSong(&pop_songs, "Song 5", "Author");
     pushFrontSong(&pop_songs, "Song 1", "Author");
-    pushBackGenre(genres, "Pop", pop_songs);
+    pushBackGenre(playlist, "Pop", pop_songs);
 
-    Node *rock_songs = NULL;
+    Song *rock_songs = NULL;
     pushFrontSong(&rock_songs, "Song 6", "Author");
     pushFrontSong(&rock_songs, "Song 7", "Author");
     pushFrontSong(&rock_songs, "Song 8", "Author");
     insertAfterSong(&rock_songs, "Song 6.5", "Author", 2);
-    pushFrontGenre(genres, "Rock", rock_songs);
+    pushFrontGenre(playlist, "Rock", rock_songs);
 
-    Node *jazz_songs = NULL;
-    pushBackGenre(genres, "Jazz", jazz_songs);
+    Song *jazz_songs = NULL;
+    pushBackGenre(playlist, "Jazz", jazz_songs);
 
-    Node *blues_songs = NULL;
-    pushBackGenre(genres, "Blues", blues_songs);
+    Song *blues_songs = NULL;
+    pushBackGenre(playlist, "Blues", blues_songs);
 
-    Node *classical_songs = NULL;
+    Song *classical_songs = NULL;
     pushBackSong(&classical_songs, "Song 9", "Author");
     pushBackSong(&classical_songs, "Song 10", "Author");
-    pushBackGenre(genres, "Classical", classical_songs);
+    pushBackGenre(playlist, "Classical", classical_songs);
 }
 
 void clearScreen()
@@ -78,21 +78,21 @@ void inputString(char *s)
     clearScreen();
 }
 
-void handlePlay(Node **playlist)
+void handlePlay(Genre **playlist)
 {
     if (*playlist != NULL)
     {
-        Node *current_genre = *playlist;
+        Genre *current_genre = *playlist;
 
-        if (current_genre->data != NULL)
+        if (current_genre->songs != NULL)
         {
-            Node *first_song = ((Genre*)current_genre->data)->songs;
-            Node *last_song = ((Genre*)current_genre->data)->songs->prev;
-            Node *current_song = first_song;
+            Song *first_song = current_genre->songs;
+            Song *last_song = current_genre->songs->prev;
+            Song *current_song = first_song;
 
             while (true)
             {
-                printf("Now playing: %s - %s\n", ((Song*)current_song->data)->artist, ((Song*)current_song->data)->name);
+                printf("Now playing: %s - %s\n", current_song->artist, current_song->name);
                 printf("\n");
                 printf("Commands:\n");
                 printf("1) Next song\n");
@@ -102,18 +102,17 @@ void handlePlay(Node **playlist)
 
                 switch (inputInteger())
                 {
-                    case 1: // Next
+                    case 1:
                         if (current_song->next == first_song)
                         {
-                            // Find next non-empty genre
                             do
                             {
                                 current_genre = current_genre->next;
                             }
-                            while (((Genre*)current_genre->data)->songs == NULL);
+                            while (current_genre->songs == NULL);
 
-                            first_song = ((Genre*)current_genre->data)->songs;
-                            last_song = ((Genre*)current_genre->data)->songs->prev;
+                            first_song = current_genre->songs;
+                            last_song = current_genre->songs->prev;
                             current_song = first_song;
                         }
                         else
@@ -122,18 +121,17 @@ void handlePlay(Node **playlist)
                         }
 
                         break;
-                    case 2: // Previous
+                    case 2:
                         if (current_song->prev == last_song)
                         {
-                            // Find previous non-empty genre
                             do
                             {
                                 current_genre = current_genre->prev;
                             }
-                            while (((Genre*)current_genre->data)->songs == NULL);
+                            while (current_genre->songs == NULL);
 
-                            first_song = ((Genre*)current_genre->data)->songs;
-                            last_song = ((Genre*)current_genre->data)->songs->prev;
+                            first_song = current_genre->songs;
+                            last_song = current_genre->songs->prev;
                             current_song = last_song;
                         }
                         else
@@ -142,9 +140,9 @@ void handlePlay(Node **playlist)
                         }
 
                         break;
-                    case 3: // Stop
+                    case 3:
                         return;
-                    default: // Invalid
+                    default:
                         printf("Invalid command, try again.\n\n");
                         break;
                 }
@@ -157,13 +155,13 @@ void handlePlay(Node **playlist)
     }
 }
 
-void handleAddSong(Node **playlist)
+void handleAddSong(Genre **playlist)
 {
     printGenres(playlist, NULL);
     printf("Genre: ");
     int genre_index = inputInteger();
 
-    Node *genre = getNode(playlist, genre_index);
+    Genre *genre = getGenre(playlist, genre_index);
 
     if (genre == NULL)
     {
@@ -189,18 +187,18 @@ void handleAddSong(Node **playlist)
             switch (inputInteger())
             {
                 case 1:
-                    pushBackSong(&((Genre*)genre->data)->songs, name, artist);
+                    pushBackSong(&genre->songs, name, artist);
                     return;
                 case 2:
-                    pushFrontSong(&((Genre*)genre->data)->songs, name, artist);
+                    pushFrontSong(&genre->songs, name, artist);
                     return;
                 case 3:
-                    printf("%s:\n", ((Genre*)genre->data)->name);
-                    printSongs(((Genre*)genre->data)->songs);
+                    printf("%s:\n", genre->name);
+                    printSongs(&genre->songs);
                     printf("Insert after: ");
                     int index = inputInteger();
 
-                    if (insertAfterSong(&((Genre*)genre->data)->songs, name, artist, index))
+                    if (insertAfterSong(&genre->songs, name, artist, index))
                     {
                         return;
                     }
@@ -218,7 +216,7 @@ void handleAddSong(Node **playlist)
     }
 }
 
-void handleAddGenre(Node **playlist)
+void handleAddGenre(Genre **playlist)
 {
     printf("Genre name: ");
     char name[MAX_STRING];
@@ -260,7 +258,7 @@ void handleAddGenre(Node **playlist)
     }
 }
 
-void handleAdd(Node **playlist)
+void handleAdd(Genre **playlist)
 {
     while (true)
     {
@@ -271,28 +269,28 @@ void handleAdd(Node **playlist)
 
         switch (inputInteger())
         {
-            case 1: // Add song
+            case 1:
                 handleAddSong(playlist);
                 return;
-            case 2: // Add genre
+            case 2:
                 handleAddGenre(playlist);
                 return;
-            case 3: // Cancel
+            case 3:
                 return;
-            default: // Invalid
+            default:
                 printf("Invalid command, try again.\n\n");
                 break;
         }
     }
 }
 
-void handleRemoveSong(Node **playlist)
+void handleRemoveSong(Genre **playlist)
 {
     printGenres(playlist, NULL);
     printf("Genre: ");
     int genre_index = inputInteger();
 
-    Node *genre = getNode(playlist, genre_index);
+    Genre *genre = getGenre(playlist, genre_index);
 
     if (genre == NULL)
     {
@@ -300,25 +298,25 @@ void handleRemoveSong(Node **playlist)
     }
     else
     {
-        printf("%s:\n", ((Genre*)genre->data)->name);
-        printSongs(((Genre*)genre->data)->songs);
+        printf("%s:\n", genre->name);
+        printSongs(&genre->songs);
         printf("Remove song: ");
         int song_index = inputInteger();
 
-        if (!removeNodeAt(&((Genre*)genre->data)->songs, song_index))
+        if (!removeSong(&genre->songs, song_index))
         {
             printf("Invalid index, try again.\n\n");
         }
     }
 }
 
-void handleRemoveGenre(Node **playlist)
+void handleRemoveGenre(Genre **playlist)
 {
     printGenres(playlist, NULL);
     printf("Genre: ");
     int genre_index = inputInteger();
 
-    Node *genre = getNode(playlist, genre_index);
+    Genre *genre = getGenre(playlist, genre_index);
 
     if (genre == NULL)
     {
@@ -326,12 +324,12 @@ void handleRemoveGenre(Node **playlist)
     }
     else
     {
-        while (removeNodeAt(&((Genre*)genre->data)->songs, 1));
-        removeNodeAt(playlist, genre_index);
+        removeAllSongs(&genre->songs);
+        removeGenre(playlist, genre_index);
     }
 }
 
-void handleRemove(Node **playlist)
+void handleRemove(Genre **playlist)
 {
     while (true)
     {
@@ -342,28 +340,28 @@ void handleRemove(Node **playlist)
 
         switch (inputInteger())
         {
-            case 1: // Remove song
+            case 1:
                 handleRemoveSong(playlist);
                 return;
-            case 2: // Remove genre
+            case 2:
                 handleRemoveGenre(playlist);
                 return;
-            case 3: // Cancel
+            case 3:
                 return;
-            default: // Invalid
+            default:
                 printf("Invalid command, try again.\n");
                 break;
         }
     }
 }
 
-void handleSave(Node **playlist)
+void handleSave(Genre **playlist)
 {
 }
 
 int main()
 {
-    Node *playlist = NULL;
+    Genre *playlist = NULL;
     generateTestData(&playlist);
 
     clearScreen();
@@ -381,26 +379,26 @@ int main()
 
         switch (inputInteger())
         {
-            case 1: // Play
+            case 1:
                 handlePlay(&playlist);
                 break;
-            case 2: // List
+            case 2:
                 printAll(&playlist);
                 break;
-            case 3: // Add
+            case 3:
                 handleAdd(&playlist);
                 break;
-            case 4: // Remove
+            case 4:
                 handleRemove(&playlist);
                 break;
-            case 5: // Save
+            case 5:
                 handleSave(&playlist);
                 break;
-            case 6: // Exit
-                removeAll(&playlist);
+            case 6:
+                removeAllGenres(&playlist);
                 exit(0);
                 break;
-            default: // Invalid
+            default:
                 printf("Invalid command, try again.\n\n");
                 break;
         }
