@@ -9,7 +9,7 @@
  *  Faculty of Electronics and Information Technology
  */
 
-#include "util.h"
+#include "utility.h"
 
 void *safeMalloc(size_t size)
 {

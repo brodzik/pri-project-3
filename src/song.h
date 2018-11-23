@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "util.h"
+#include "utility.h"
 
 #include <stdbool.h>
 #include <string.h>
