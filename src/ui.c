@@ -290,10 +290,94 @@ void handleRemove(Genre **playlist)
 
 void handleLoad(Genre **playlist)
 {
+    FILE *file;
+    file = fopen("data.bin", "r");
+
+    if (file == NULL)
+    {
+        printf("Failed to load file.\n\n");
+    }
+    else
+    {
+        if (*playlist != NULL)
+        {
+            removeAllGenres(playlist);
+        }
+
+        void *genre_term = safeMalloc(sizeof(Song));
+        memset(genre_term, 1, sizeof(Song));
+
+        Genre *genre_buffer = (Genre*)safeMalloc(sizeof(Genre));
+        Song *song_buffer = (Song*)safeMalloc(sizeof(Song));
+
+        while (fread(genre_buffer, sizeof(Genre), 1, file) == 1)
+        {
+            Song *songs = NULL;
+
+            while (fread(song_buffer, sizeof(Song), 1, file) == 1)
+            {
+                if (memcmp(song_buffer, genre_term, sizeof(Song)) == 0)
+                {
+                    break;
+                }
+                else
+                {
+                    pushBackSong(&songs, song_buffer->name, song_buffer->artist);
+                }
+            }
+
+            pushBackGenre(playlist, genre_buffer->name, songs);
+        }
+
+        free(genre_buffer);
+        free(song_buffer);
+
+        fclose(file);
+    }
 }
 
 void handleSave(Genre **playlist)
 {
+    FILE *file;
+    file = fopen("data.bin", "w");
+
+    if (file == NULL)
+    {
+        printf("Failed to save file.\n\n");
+    }
+    else
+    {
+        void *genre_term = safeMalloc(sizeof(Song));
+        memset(genre_term, 1, sizeof(Song));
+
+        if (*playlist != NULL)
+        {
+            Genre *curr_genre = *playlist;
+
+            do
+            {
+                fwrite(curr_genre, sizeof(Genre), 1, file);
+
+                if (curr_genre->songs != NULL)
+                {
+                    Song *curr_song = curr_genre->songs;
+
+                    do
+                    {
+                        fwrite(curr_song, sizeof(Song), 1, file);
+                        curr_song = curr_song->next;
+                    }
+                    while (curr_song != curr_genre->songs);
+                }
+
+                fwrite(genre_term, sizeof(Song), 1, file);
+                curr_genre = curr_genre->next;
+            }
+            while (curr_genre != *playlist);
+        }
+
+        fclose(file);
+    }
 }
 
 void initMainLoop(Genre **playlist)
