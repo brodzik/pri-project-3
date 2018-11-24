@@ -290,8 +290,12 @@ void handleRemove(Genre **playlist)
 
 void handleLoad(Genre **playlist)
 {
+    printf("File name: ");
+    char file_name[MAX_STRING];
+    inputString(file_name);
+
     FILE *file;
-    file = fopen("data.bin", "r");
+    file = fopen(file_name, "r");
 
     if (file == NULL)
     {
@@ -333,13 +337,18 @@ void handleLoad(Genre **playlist)
         free(song_buffer);
 
         fclose(file);
+        printf("File loaded.\n\n");
     }
 }
 
 void handleSave(Genre **playlist)
 {
+    printf("File name: ");
+    char file_name[MAX_STRING];
+    inputString(file_name);
+
     FILE *file;
-    file = fopen("data.bin", "w");
+    file = fopen(file_name, "w");
 
     if (file == NULL)
     {
@@ -377,6 +386,7 @@ void handleSave(Genre **playlist)
         }
 
         fclose(file);
+        printf("File saved.\n\n");
     }
 }
 
