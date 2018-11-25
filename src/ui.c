@@ -288,18 +288,15 @@ void handleRemove(Genre **playlist)
     }
 }
 
-void handleLoad(Genre **playlist)
+bool loadPlaylist(Genre **playlist, char *file_name, LoadFlag flag, char *genre_name)
 {
-    printf("File name: ");
-    char file_name[MAX_STRING];
-    inputString(file_name);
-
     FILE *file;
     file = fopen(file_name, "r");
 
     if (file == NULL)
     {
         printf("Failed to load file.\n\n");
+        return false;
     }
     else
     {
@@ -330,15 +327,52 @@ void handleLoad(Genre **playlist)
                 }
             }
 
-            pushBackGenre(playlist, genre_buffer->name, songs);
+            if (flag == ONLY)
+            {
+                if (strcmp(genre_buffer->name, genre_name) == 0)
+                {
+                    pushBackGenre(playlist, genre_buffer->name, songs);
+                    break;
+                }
+            }
+            else if (flag == NOT)
+            {
+                if (strcmp(genre_buffer->name, genre_name) != 0)
+                {
+                    pushBackGenre(playlist, genre_buffer->name, songs);
+                }
+            }
+            else if (flag == FULL)
+            {
+                if (songs != NULL)
+                {
+                     pushBackGenre(playlist, genre_buffer->name, songs);
+                }
+            }
+            else
+            {
+                pushBackGenre(playlist, genre_buffer->name, songs);
+            }
         }
 
+        free(genre_term);
         free(genre_buffer);
         free(song_buffer);
 
         fclose(file);
         printf("File loaded.\n\n");
+
+        return true;
     }
+}
+
+void handleLoad(Genre **playlist)
+{
+    printf("File name: ");
+    char file_name[MAX_STRING];
+    inputString(file_name);
+
+    loadPlaylist(playlist, file_name, NONE, NULL);
 }
 
 void handleSave(Genre **playlist)
@@ -388,6 +422,116 @@ void handleSave(Genre **playlist)
         fclose(file);
         printf("File saved.\n\n");
     }
+}
+
+void generateTestData(Genre **playlist)
+{
+    Song *pop_songs = NULL;
+    pushBackSong(&pop_songs, "Song 2", "Author");
+    pushBackSong(&pop_songs, "Song 3", "Author");
+    pushBackSong(&pop_songs, "Song 4", "Author");
+    pushBackSong(&pop_songs, "Song 5", "Author");
+    pushFrontSong(&pop_songs, "Song 1", "Author");
+    pushBackGenre(playlist, "Pop", pop_songs);
+
+    Song *rock_songs = NULL;
+    pushFrontSong(&rock_songs, "Song 6", "Author");
+    pushFrontSong(&rock_songs, "Song 7", "Author");
+    pushFrontSong(&rock_songs, "Song 8", "Author");
+    insertAfterSong(&rock_songs, "Song 6.5", "Author", 2);
+    pushFrontGenre(playlist, "Rock", rock_songs);
+
+    Song *jazz_songs = NULL;
+    pushBackGenre(playlist, "Jazz", jazz_songs);
+
+    Song *blues_songs = NULL;
+    pushBackGenre(playlist, "Blues", blues_songs);
+
+    Song *classical_songs = NULL;
+    pushBackSong(&classical_songs, "Song 9", "Author");
+    pushBackSong(&classical_songs, "Song 10", "Author");
+    pushBackGenre(playlist, "Classical", classical_songs);
+}
+
+void parseArgs(Genre **playlist, int argc, char **argv)
+{
+    if (argc == 2)
+    {
+        if (strcmp(argv[1], "start") == 0)
+        {
+            return;
+        }
+        else if (strcmp(argv[1], "demo") == 0)
+        {
+            generateTestData(playlist);
+            return;
+        }
+    }
+    else if (argc == 3)
+    {
+        if (strcmp(argv[1], "load") == 0)
+        {
+            if (loadPlaylist(playlist, argv[2], NONE, NULL))
+            {
+                return;
+            }
+            else
+            {
+                exit(-1);
+            }
+        }
+    }
+    else if (argc == 4)
+    {
+        if (strcmp(argv[1], "load") == 0 && strcmp(argv[3], "full") == 0)
+        {
+            if (loadPlaylist(playlist, argv[2], FULL, NULL))
+            {
+                return;
+            }
+            else
+            {
+                exit(-1);
+            }
+        }
+    }
+    else if (argc == 5)
+    {
+        if (strcmp(argv[1], "load") == 0)
+        {
+            if (strcmp(argv[3], "only") == 0)
+            {
+                if (loadPlaylist(playlist, argv[2], ONLY, argv[4]))
+                {
+                    return;
+                }
+                else
+                {
+                    exit(-1);
+                }
+            }
+            else if (strcmp(argv[3], "not") == 0)
+            {
+                if (loadPlaylist(playlist, argv[2], NOT, argv[4]))
+                {
+                    return;
+                }
+                else
+                {
+                    exit(-1);
+                }
+            }
+        }
+    }
+
+    printf("Usage:\n");
+    printf("    app start                       initializes the app with an empty playlist\n");
+    printf("    app demo                        loads a demo playlist\n");
+    printf("    app load [file]                 loads an existing playlist\n");
+    printf("    app load [file] only [genre]    loads one specific genre from an existing playlist\n");
+    printf("    app load [file] not  [genre]    loads all but one specific genre from an existing playlist\n");
+    printf("    app load [file] full            loads all non-empty genres from an existing playlist\n");
+    exit(-1);
 }
 
 void initMainLoop(Genre **playlist)
