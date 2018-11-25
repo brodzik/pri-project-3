@@ -17,7 +17,7 @@ void *safeMalloc(size_t size)
 
     if (mem == NULL)
     {
-        printf("Fatal: failed to allocate '%d' bytes of memory at '%x'\n", size, mem);
+        printf("Fatal: failed to allocate '%lu' bytes of memory at '%p'\n", size, mem);
         exit(-1);
     }
 
