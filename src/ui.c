@@ -305,8 +305,8 @@ bool loadPlaylist(Genre **playlist, char *file_name, LoadFlag flag, char *genre_
             removeAllGenres(playlist);
         }
 
-        void *genre_term = safeMalloc(sizeof(Song));
-        memset(genre_term, 1, sizeof(Song));
+        void *genre_terminator = safeMalloc(sizeof(Song));
+        memset(genre_terminator, 1, sizeof(Song));
 
         Genre *genre_buffer = (Genre*)safeMalloc(sizeof(Genre));
         Song *song_buffer = (Song*)safeMalloc(sizeof(Song));
@@ -317,7 +317,7 @@ bool loadPlaylist(Genre **playlist, char *file_name, LoadFlag flag, char *genre_
 
             while (fread(song_buffer, sizeof(Song), 1, file) == 1)
             {
-                if (memcmp(song_buffer, genre_term, sizeof(Song)) == 0)
+                if (memcmp(song_buffer, genre_terminator, sizeof(Song)) == 0)
                 {
                     break;
                 }
@@ -355,7 +355,7 @@ bool loadPlaylist(Genre **playlist, char *file_name, LoadFlag flag, char *genre_
             }
         }
 
-        free(genre_term);
+        free(genre_terminator);
         free(genre_buffer);
         free(song_buffer);
 
@@ -390,8 +390,8 @@ void handleSave(Genre **playlist)
     }
     else
     {
-        void *genre_term = safeMalloc(sizeof(Song));
-        memset(genre_term, 1, sizeof(Song));
+        void *genre_terminator = safeMalloc(sizeof(Song));
+        memset(genre_terminator, 1, sizeof(Song));
 
         if (*playlist != NULL)
         {
@@ -413,11 +413,13 @@ void handleSave(Genre **playlist)
                     while (curr_song != curr_genre->songs);
                 }
 
-                fwrite(genre_term, sizeof(Song), 1, file);
+                fwrite(genre_terminator, sizeof(Song), 1, file);
                 curr_genre = curr_genre->next;
             }
             while (curr_genre != *playlist);
         }
+
+        free(genre_terminator);
 
         fclose(file);
         printf("File saved.\n\n");
