@@ -1,0 +1,82 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{listings}
+\usetikzlibrary{shapes, arrows, positioning, fit, backgrounds}
+
+\tikzstyle{rect} = [draw, rectangle, rounded corners, fill=white, minimum width=1.5cm, minimum height=0.7cm]
+\tikzstyle{fillonly} = [draw, rectangle, fill=black!10]
+\tikzstyle{line} = [draw, -latex]
+
+\titleformat*{\section}{\Large\bfseries}
+
+\title{\bf [PRI] Projekt trzeci}
+\author{Adrian Brodzik}
+
+\begin{document}
+
+\maketitle
+
+\section*{Zadanie}
+Napisać program zarządzający strukturami dynamicznymi. Niech będzie sobie program do zarządzania playlistą. Niech istnieje kilka typów muzyki, np. muzyka klasyczna, opera, jazz, itd. Każdy typ muzyki niech będzie pozycją pierwszej listy cyklicznej, na której znajdują się listy utworów do odtworzenia. Lista utworów niech trzyma je w kolejności priorytetów nadanych przy dodawaniu. Automat ma odtwarzać cyklicznie utwory na zasadzie: kolejno kolejne utwory z każdej list klasy muzyki. Program ma pozwalać w dowolnym momencie w pełni podglądać i modyfikować struktury danych.
+\\\\
+Zaimplementować zapis i odczyt dynamicznej struktury z dysku (binarny). Podanie przy uruchamianiu programu nazwy pliku z zapisem ma wczytać na starcie dany plik. Wymyślić dodatkowe dwa parametry uruchomienia i je obsłużyć. Nie wolno w programie stosować zmiennych globalnych. Program należy podzielić na pliki. Niepodane dane należy sobie wymyślić - wypełnić projektowane struktury jakimiś sensownymi danymi.
+
+\section*{Problemy}
+Dynamicznie przechowywać i modyfikować listę zawierającą listy struktur. Wypisywać, dodawać, usuwać dowolne listy i struktury. Iterować po każdej strukturze z każdej listy.
+\\\\
+Zapisywać/odczytywać listy list struktur na/z dysku w postaci binarnej.
+
+\section*{Rozwiązania}
+Niech listą piosenek będzie struktura zawierająca informacje o piosence oraz wskaźnik do kolejnej piosenki. Niech listą gatunków muzyki będzie struktura zawierająca informacje o gatunku, wskaźnik do listy piosenek oraz wskaźnik do kolejnego gatunku. Listę cykliczną uzyskamy, gdy wskaźnik ostatniego elementu listy wskazuje na pierwszy element listy.
+\\\\
+Pojedynczą strukturę można zapisać do pliku binarnego wykorzystując bibliotekę standardową. Zapisać strukturę gatunku (dla każdego gatunku), zapisać strukturę piosenki (dla każdej piosenki tego gatunku) oraz zapisać pustą strukturę (o wymiarze struktury piosenki, która rozdzieli kolejne gatunki).
+\\\\
+Analogicznie pojedynczą strukturę można odczytać z pliku binarnego wykorzystując bibliotekę standardową. Wczytać strukturę gatunku (dopóki nie wczytaliśmy całego pliku), wczytać piosenki tego gatunku (dopóki nie wczytaliśmy struktury pustej).
+
+\section*{Zastosowania bibliotek standardowych}
+\begin{itemize}
+    \item \texttt{stdbool.h}
+        \subitem \texttt{bool} - typ zmiennej logicznej
+    \item \texttt{stdio.h}
+        \subitem \texttt{printf} - wyświetlanie komunikatów dla użytkownika
+        \subitem \texttt{scanf} - wczytywanie wejścia od użytkownika
+        \subitem \texttt{getchar} - czyszczenie buforu wejścia
+        \subitem \texttt{fopen} - odczyt pliku z dysku
+        \subitem \texttt{fclose} - zamknięcie odczytywanego pliku
+        \subitem \texttt{fwrite} - zapis struktur do pliku binarnego
+        \subitem \texttt{fread} - odczyt struktur z pliku binarnego
+    \item \texttt{stdlib.h}
+        \subitem \texttt{exit} - przerwanie programu w razie wystąpienia błędów
+        \subitem \texttt{malloc} - dynamiczna alokacja pamięci
+        \subitem \texttt{free} - dynamiczna dealokacja pamięci
+        \subitem \texttt{system} - wywołanie komend czyszczących konsolę
+    \item \texttt{string.h}
+        \subitem \texttt{strncpy} - przypisywanie wartości zmiennym typu \texttt{char*}
+        \subitem \texttt{strcmp} - porównanie zmiennych typu \texttt{char*}
+        \subitem \texttt{memset} - wypełnienie struktury rozdzielającej gatunki
+        \subitem \texttt{memcmp} - wykrycie struktury rozdzielającej gatunki
+    \item \texttt{sizeof} - określenie rozmiaru struktury
+\end{itemize}
+
+\section*{Schemat działania}
+TODO
+
+\section*{Testowanie}
+Testowano dodawanie w dowolne miejsca i usuwanie z dowolnych miejsc pojedyncze piosenki oraz całe gatunki (w tym dealokacja pamięci). Testowano odtwarzanie list, w tym cykliczność oraz omijanie list pustych. Testowano na listach pustych i sprawdzano istnienie wartości wskaźników (tzw. null-check). Błędne wejście użytkownika wywołuje komunikat o błędzie, czyszczenie buforu wejścia, przypisanie wartości domyślnej/pustej lub obcięcie wartości (np. dla typu \texttt{char*}). Sprawdzono poprawny zapis/odczyt struktur do/z plików binarnych wraz z obsługą odpowiednich parametrów podawanych przy uruchomieniu.
+
+\section*{Podsumowanie}
+Projekt długoterminowy składający się z wielu elementów wymagających oddzielnej implementacji i testowania. Wykorzystano struktury dynamiczne do przechowywania danych w pamięci i na dysku oraz zaprojektowano ciągły interfejs powracający do stanu początkowego.
+
+\section*{Bibliografia}
+\begin{itemize}
+    \item https://www.geeksforgeeks.org/doubly-circular-linked-list-set-1-introduction-and-insertion/
+    \item https://www.geeksforgeeks.org/delete-a-node-in-a-doubly-linked-list/
+    \item https://stackoverflow.com/a/4384616
+\end{itemize}
+
+\end{document}
