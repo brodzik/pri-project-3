@@ -36,9 +36,9 @@ Niech listą piosenek będzie struktura zawierająca informacje o piosence oraz 
 \\\\
 Pojedynczą strukturę można zapisać do pliku binarnego wykorzystując bibliotekę standardową. Zapisać strukturę gatunku (dla każdego gatunku), zapisać strukturę piosenki (dla każdej piosenki tego gatunku) oraz zapisać pustą strukturę (o wymiarze struktury piosenki, która rozdzieli kolejne gatunki).
 \\\\
-Analogicznie pojedynczą strukturę można odczytać z pliku binarnego wykorzystując bibliotekę standardową. Wczytać strukturę gatunku (dopóki nie wczytaliśmy całego pliku), wczytać piosenki tego gatunku (dopóki nie wczytaliśmy struktury pustej).
+Analogicznie pojedynczą strukturę można odczytać z pliku binarnego wykorzystując bibliotekę standardową. Wczytać strukturę gatunku (dopóki nie wczytaliśmy całego pliku), wczytać piosenki tego gatunku (dopóki nie wczytaliśmy struktury rozdzielającej).
 
-\section*{Zastosowania bibliotek standardowych}
+\section*{Zastosowania biblioteki standardowej}
 \begin{itemize}
     \item \texttt{stdbool.h}
         \subitem \texttt{bool} - typ zmiennej logicznej
@@ -64,10 +64,37 @@ Analogicznie pojedynczą strukturę można odczytać z pliku binarnego wykorzyst
 \end{itemize}
 
 \section*{Schemat działania}
-TODO
+\begin{center}
+    \begin{tikzpicture}
+\node [rect] (start) {start \texttt{zadanieX}};
+\node [fillonly, minimum width=7.5cm, minimum height=6.8cm, below=0.5cm of start] (fill) {};
+\node [below=0.6cm of start] (loop) {\texttt{while true}};
+\node [rect, below=0.25cm of loop] (out) {wypisz opcje};
+\node [rect, below=0.25cm of out] (in) {wczytaj wejście \texttt{Y}};
+\node [rect, below=0.25cm of in] (check) {czy \texttt{Y} jest poprawne};
+\node [rect, below=0.66cm of check] (new) {wykonaj \texttt{zadanieY}};
+\node [rect, below=0.5cm of fill] (stop) {stop \texttt{zadanieX}};
+
+\coordinate [below=1.33cm of new] (c2);
+
+\node [rect, left=0.2cm of c2] (break) {\texttt{break}};
+\node [rect, right=0.1cm of c2] (continue) {\texttt{continue}};
+
+\coordinate [left=0.66cm of in] (c1);
+
+\path [line] (start) -- (fill);
+\path [line] (out) -- (in);
+\path [line] (in) -- (check);
+\path [line] (check) -- node [right] {tak} (new);
+\path [line] (check) -| node [left] {nie} (c1) |- (out);
+\path [line] (new) -- node [left] {\texttt{warunekA}} (break);
+\path [line] (new) -- node [right] {\texttt{warunekB}} (continue);
+\path [line] (fill) -- (stop);
+\end{tikzpicture}
+\end{center}
 
 \section*{Testowanie}
-Testowano dodawanie w dowolne miejsca i usuwanie z dowolnych miejsc pojedyncze piosenki oraz całe gatunki (w tym dealokacja pamięci). Testowano odtwarzanie list, w tym cykliczność oraz omijanie list pustych. Testowano na listach pustych i sprawdzano istnienie wartości wskaźników (tzw. null-check). Błędne wejście użytkownika wywołuje komunikat o błędzie, czyszczenie buforu wejścia, przypisanie wartości domyślnej/pustej lub obcięcie wartości (np. dla typu \texttt{char*}). Sprawdzono poprawny zapis/odczyt struktur do/z plików binarnych wraz z obsługą odpowiednich parametrów podawanych przy uruchomieniu.
+Testowano dodawanie w dowolne miejsca i usuwanie z dowolnych miejsc pojedyncze piosenki oraz całe gatunki. Testowano odtwarzanie list (w tym cykliczność oraz omijanie list pustych). Testowano listy puste i sprawdzano istnienie wartości wskaźników (tzw. null-check). Błędne wejście użytkownika wywołuje komunikat o błędzie, czyszczenie buforu wejścia, przypisanie wartości domyślnej/pustej lub obcięcie wartości (np. dla typu \texttt{char*}). Sprawdzono poprawny zapis/odczyt struktur do/z plików binarnych wraz z obsługą odpowiednich parametrów podawanych przy uruchomieniu.
 
 \section*{Podsumowanie}
 Projekt długoterminowy składający się z wielu elementów wymagających oddzielnej implementacji i testowania. Wykorzystano struktury dynamiczne do przechowywania danych w pamięci i na dysku oraz zaprojektowano ciągły interfejs powracający do stanu początkowego.
