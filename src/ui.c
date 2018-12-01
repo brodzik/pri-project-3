@@ -429,19 +429,18 @@ void handleSave(Genre **playlist)
 void generateTestData(Genre **playlist)
 {
     Song *pop_songs = NULL;
-    pushBackSong(&pop_songs, "Song 2", "Author");
-    pushBackSong(&pop_songs, "Song 3", "Author");
-    pushBackSong(&pop_songs, "Song 4", "Author");
-    pushBackSong(&pop_songs, "Song 5", "Author");
-    pushFrontSong(&pop_songs, "Song 1", "Author");
+    pushBackSong(&pop_songs, "Song 1", "Artist 1");
+    pushBackSong(&pop_songs, "Song 2", "Artist 2");
+    pushBackSong(&pop_songs, "Song 3", "Artist 3");
+    pushBackSong(&pop_songs, "Song 4", "Artist 4");
+    pushBackSong(&pop_songs, "Song 5", "Artist 5");
     pushBackGenre(playlist, "Pop", pop_songs);
 
     Song *rock_songs = NULL;
-    pushFrontSong(&rock_songs, "Song 6", "Author");
-    pushFrontSong(&rock_songs, "Song 7", "Author");
-    pushFrontSong(&rock_songs, "Song 8", "Author");
-    insertAfterSong(&rock_songs, "Song 6.5", "Author", 2);
-    pushFrontGenre(playlist, "Rock", rock_songs);
+    pushBackSong(&rock_songs, "Song 6", "Artist 6");
+    pushBackSong(&rock_songs, "Song 7", "Artist 7");
+    pushBackSong(&rock_songs, "Song 8", "Artist 8");
+    pushBackGenre(playlist, "Rock", rock_songs);
 
     Song *jazz_songs = NULL;
     pushBackGenre(playlist, "Jazz", jazz_songs);
@@ -450,8 +449,7 @@ void generateTestData(Genre **playlist)
     pushBackGenre(playlist, "Blues", blues_songs);
 
     Song *classical_songs = NULL;
-    pushBackSong(&classical_songs, "Song 9", "Author");
-    pushBackSong(&classical_songs, "Song 10", "Author");
+    pushBackSong(&classical_songs, "Song 9", "Artist 9");
     pushBackGenre(playlist, "Classical", classical_songs);
 }
 
