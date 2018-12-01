@@ -11,12 +11,13 @@
 
 #include "song.h"
 
-Song *createSong(char *name, char *artist)
+Song *createSong(char *name, char *artist, int length)
 {
     Song *new_song = (Song*)safeMalloc(sizeof(Song));
 
     strncpy(new_song->name, name, MAX_STRING);
     strncpy(new_song->artist, artist, MAX_STRING);
+    new_song->length = length;
 
     return new_song;
 }
@@ -43,9 +44,9 @@ Song *getSong(Song **head, int index)
     return NULL;
 }
 
-bool pushBackSong(Song **head, char *name, char *artist)
+bool pushBackSong(Song **head, char *name, char *artist, int length)
 {
-    Song *new_song = createSong(name, artist);
+    Song *new_song = createSong(name, artist, length);
 
     if (*head == NULL)
     {
@@ -66,9 +67,9 @@ bool pushBackSong(Song **head, char *name, char *artist)
     return true;
 }
 
-bool pushFrontSong(Song **head, char *name, char *artist)
+bool pushFrontSong(Song **head, char *name, char *artist, int length)
 {
-    Song *new_song = createSong(name, artist);
+    Song *new_song = createSong(name, artist, length);
 
     if (*head == NULL)
     {
@@ -91,7 +92,7 @@ bool pushFrontSong(Song **head, char *name, char *artist)
     return true;
 }
 
-bool insertAfterSong(Song **head, char *name, char *artist, int index)
+bool insertAfterSong(Song **head, char *name, char *artist, int length, int index)
 {
     Song *curr = getSong(head, index);
 
@@ -101,7 +102,7 @@ bool insertAfterSong(Song **head, char *name, char *artist, int index)
     }
     else
     {
-        Song *new_song = createSong(name, artist);
+        Song *new_song = createSong(name, artist, length);
 
         new_song->prev = curr;
         new_song->next = curr->next;
@@ -179,7 +180,7 @@ void printSongs(Song **head)
 
         do
         {
-            printf("    %d) %s - %s\n", i, curr->artist, curr->name);
+            printf("    %d) %s - %s - %d seconds\n", i, curr->artist, curr->name, curr->length);
             ++i;
             curr = curr->next;
         }

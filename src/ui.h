@@ -15,8 +15,18 @@
 #include "genre.h"
 #include "song.h"
 
+#include <time.h>
+
 enum LoadFlag { NONE, ONLY, NOT, FULL };
 typedef enum LoadFlag LoadFlag;
+
+void setNextSong(Genre **current_genre, Song **first_song, Song **last_song, Song **current_song);
+
+void setPrevSong(Genre **current_genre, Song **first_song, Song **last_song, Song **current_song);
+
+void handleStatus(Genre **current_genre, Song **first_song, Song **last_song, Song **current_song, int *elapsed, int *start);
+
+void handlePause(Genre **current_genre, Song **first_song, Song **last_song, Song **current_song, int *elapsed, int *start);
 
 void handlePlay(Genre **playlist);
 

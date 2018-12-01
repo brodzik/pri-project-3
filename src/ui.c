@@ -11,6 +11,96 @@
 
 #include "ui.h"
 
+void setNextSong(Genre **current_genre, Song **first_song, Song **last_song, Song **current_song)
+{
+    if ((*current_song)->next == *first_song)
+    {
+        do
+        {
+            *current_genre = (*current_genre)->next;
+        }
+        while ((*current_genre)->songs == NULL);
+
+        *first_song = (*current_genre)->songs;
+        *last_song = (*current_genre)->songs->prev;
+        *current_song = *first_song;
+    }
+    else
+    {
+        *current_song = (*current_song)->next;
+    }
+}
+
+void setPrevSong(Genre **current_genre, Song **first_song, Song **last_song, Song **current_song)
+{
+    if ((*current_song)->prev == *last_song)
+    {
+        do
+        {
+            *current_genre = (*current_genre)->prev;
+        }
+        while ((*current_genre)->songs == NULL);
+
+        *first_song = (*current_genre)->songs;
+        *last_song = (*current_genre)->songs->prev;
+        *current_song = *last_song;
+    }
+    else
+    {
+        *current_song = (*current_song)->prev;
+    }
+}
+
+void handleStatus(Genre **current_genre, Song **first_song, Song **last_song, Song **current_song, int *elapsed, int *start)
+{
+    *elapsed += time(NULL) - *start;
+
+    while (*elapsed >= (*current_song)->length)
+    {
+        *elapsed -= (*current_song)->length;
+        setNextSong(current_genre, first_song, last_song, current_song);
+    }
+
+    *start = time(NULL);
+}
+
+void handlePause(Genre **current_genre, Song **first_song, Song **last_song, Song **current_song, int *elapsed, int *start)
+{
+    handleStatus(current_genre, first_song, last_song, current_song, elapsed, start);
+
+    while (true)
+    {
+        printf("Paused: %s - %s\n", (*current_song)->artist, (*current_song)->name);
+        printf("Time: %d/%d seconds\n", *elapsed, (*current_song)->length);
+        printf("\n");
+        printf("Commands:\n");
+        printf("1) Unpause\n");
+        printf("2) Next song\n");
+        printf("3) Previous song\n");
+        printf("\n");
+
+        switch (inputInteger())
+        {
+            case 1:
+                *start = time(NULL);
+                return;
+            case 2:
+                *elapsed = 0;
+                setNextSong(current_genre, first_song, last_song, current_song);
+                *start = time(NULL);
+                return;
+            case 3:
+                *elapsed = 0;
+                setPrevSong(current_genre, first_song, last_song, current_song);
+                *start = time(NULL);
+                return;
+            default:
+                printf("Invalid command, try again.\n\n");
+                break;
+        }
+    }
+}
+
 void handlePlay(Genre **playlist)
 {
     if (*playlist != NULL)
@@ -23,55 +113,27 @@ void handlePlay(Genre **playlist)
             Song *last_song = current_genre->songs->prev;
             Song *current_song = first_song;
 
+            int elapsed = 0;
+            int start = time(NULL);
+
             while (true)
             {
-                printf("Now playing: %s - %s\n", current_song->artist, current_song->name);
+                printf("Playing: %s - %s\n", current_song->artist, current_song->name);
+                printf("Time: %d/%d seconds\n", elapsed, current_song->length);
                 printf("\n");
                 printf("Commands:\n");
-                printf("1) Next song\n");
-                printf("2) Previous song\n");
+                printf("1) Status\n");
+                printf("2) Pause\n");
                 printf("3) Stop\n");
                 printf("\n");
 
                 switch (inputInteger())
                 {
                     case 1:
-                        if (current_song->next == first_song)
-                        {
-                            do
-                            {
-                                current_genre = current_genre->next;
-                            }
-                            while (current_genre->songs == NULL);
-
-                            first_song = current_genre->songs;
-                            last_song = current_genre->songs->prev;
-                            current_song = first_song;
-                        }
-                        else
-                        {
-                            current_song = current_song->next;
-                        }
-
+                        handleStatus(&current_genre, &first_song, &last_song, &current_song, &elapsed, &start);
                         break;
                     case 2:
-                        if (current_song->prev == last_song)
-                        {
-                            do
-                            {
-                                current_genre = current_genre->prev;
-                            }
-                            while (current_genre->songs == NULL);
-
-                            first_song = current_genre->songs;
-                            last_song = current_genre->songs->prev;
-                            current_song = last_song;
-                        }
-                        else
-                        {
-                            current_song = current_song->prev;
-                        }
-
+                        handlePause(&current_genre, &first_song, &last_song, &current_song, &elapsed, &start);
                         break;
                     case 3:
                         return;
@@ -110,6 +172,9 @@ void handleAddSong(Genre **playlist)
         char artist[MAX_STRING];
         inputString(artist);
 
+        printf("Song length: ");
+        int length = inputInteger();
+
         while (true)
         {
             printf("Add song:\n");
@@ -120,10 +185,10 @@ void handleAddSong(Genre **playlist)
             switch (inputInteger())
             {
                 case 1:
-                    pushBackSong(&genre->songs, name, artist);
+                    pushBackSong(&genre->songs, name, artist, length);
                     return;
                 case 2:
-                    pushFrontSong(&genre->songs, name, artist);
+                    pushFrontSong(&genre->songs, name, artist, length);
                     return;
                 case 3:
                     printf("%s:\n", genre->name);
@@ -131,7 +196,7 @@ void handleAddSong(Genre **playlist)
                     printf("Insert after: ");
                     int index = inputInteger();
 
-                    if (insertAfterSong(&genre->songs, name, artist, index))
+                    if (insertAfterSong(&genre->songs, name, artist, length, index))
                     {
                         return;
                     }
@@ -323,7 +388,7 @@ bool loadPlaylist(Genre **playlist, char *file_name, LoadFlag flag, char *genre_
                 }
                 else
                 {
-                    pushBackSong(&songs, song_buffer->name, song_buffer->artist);
+                    pushBackSong(&songs, song_buffer->name, song_buffer->artist, song_buffer->length);
                 }
             }
 
@@ -346,7 +411,7 @@ bool loadPlaylist(Genre **playlist, char *file_name, LoadFlag flag, char *genre_
             {
                 if (songs != NULL)
                 {
-                     pushBackGenre(playlist, genre_buffer->name, songs);
+                    pushBackGenre(playlist, genre_buffer->name, songs);
                 }
             }
             else
@@ -429,17 +494,17 @@ void handleSave(Genre **playlist)
 void generateTestData(Genre **playlist)
 {
     Song *pop_songs = NULL;
-    pushBackSong(&pop_songs, "Song 1", "Artist 1");
-    pushBackSong(&pop_songs, "Song 2", "Artist 2");
-    pushBackSong(&pop_songs, "Song 3", "Artist 3");
-    pushBackSong(&pop_songs, "Song 4", "Artist 4");
-    pushBackSong(&pop_songs, "Song 5", "Artist 5");
+    pushBackSong(&pop_songs, "Song 1", "Artist 1", 10);
+    pushBackSong(&pop_songs, "Song 2", "Artist 2", 15);
+    pushBackSong(&pop_songs, "Song 3", "Artist 3", 5);
+    pushBackSong(&pop_songs, "Song 4", "Artist 4", 60);
+    pushBackSong(&pop_songs, "Song 5", "Artist 5", 10);
     pushBackGenre(playlist, "Pop", pop_songs);
 
     Song *rock_songs = NULL;
-    pushBackSong(&rock_songs, "Song 6", "Artist 6");
-    pushBackSong(&rock_songs, "Song 7", "Artist 7");
-    pushBackSong(&rock_songs, "Song 8", "Artist 8");
+    pushBackSong(&rock_songs, "Song 6", "Artist 6", 5);
+    pushBackSong(&rock_songs, "Song 7", "Artist 7", 5);
+    pushBackSong(&rock_songs, "Song 8", "Artist 8", 10);
     pushBackGenre(playlist, "Rock", rock_songs);
 
     Song *jazz_songs = NULL;
@@ -449,7 +514,7 @@ void generateTestData(Genre **playlist)
     pushBackGenre(playlist, "Blues", blues_songs);
 
     Song *classical_songs = NULL;
-    pushBackSong(&classical_songs, "Song 9", "Artist 9");
+    pushBackSong(&classical_songs, "Song 9", "Artist 9", 10);
     pushBackGenre(playlist, "Classical", classical_songs);
 }
 
